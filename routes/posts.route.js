@@ -27,13 +27,7 @@ router.get("/posts", async (req, res) => {
     include: [
       {
         model: Users,
-        attributes: ["updatedAt"],
-        include: [
-          {
-            model: UserInfos,
-            attributes: ["name"],
-          },
-        ],
+        attributes: ["email"],
       },
     ],
     order: [["createdAt", "DESC"]],
