@@ -21,25 +21,22 @@ router.post("/login", async (req, res) => {
     "customized_secret_key"
   );
   res.cookie("authorization", `Bearer ${token}`);
-  return res.status(200).json({ message: "로그인 성공" });
+  return res.status(200).json({ message: "로그인 성공", userId: user.userId });
 }); // routes/users.route.js
 
 // 회원가입
 router.post("/users", async (req, res) => {
   const { email, password, confirmPassword, name, age, gender, profileImage } =
     req.body;
-  const regex = /^[a-zA-Z0-9]{3,}$/;
-  const idCheck = regex.test(email);
 
-  if (!idCheck) {
+  if (email.length < 10) {
     res.status(400).json({
-      errorMessage:
-        "email 최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9) 으로 작성하세요",
+      errorMessage: "email 최소 10자 이상으로 작성하세요",
     });
     return;
   }
 
-  if (password.length < 4 || password.includes(nickname)) {
+  if (password.length < 4 || password.includes(email)) {
     res.status(400).json({
       errorMessage:
         "password를 nickname 을 포함하지 않으면서 최소 4자 이상으로 작성하세요",

@@ -23,7 +23,13 @@ router.post("/posts", authMiddleware, async (req, res) => {
 // 게시글 목록 조회
 router.get("/posts", async (req, res) => {
   const posts = await Posts.findAll({
-    attributes: ["postId", "title", "createdAt", "updatedAt"],
+    attributes: ["postId", "title", "createdAt"],
+    include: [
+      {
+        model: UserInfos, // 1:1 관계를 맺고있는 UserInfos 테이블을 조회합니다.
+        attributes: ["name"],
+      },
+    ],
     order: [["createdAt", "DESC"]],
   });
 
