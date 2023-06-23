@@ -1,7 +1,7 @@
 // routes/posts.route.js
 
 const express = require("express");
-const { Posts } = require("../models");
+const { Posts, Users, UserInfos } = require("../models");
 const authMiddleware = require("../middlewares/auth-middleware");
 const router = express.Router();
 
@@ -26,8 +26,14 @@ router.get("/posts", async (req, res) => {
     attributes: ["postId", "title", "createdAt"],
     include: [
       {
-        model: UserInfos, // 1:1 관계를 맺고있는 UserInfos 테이블을 조회합니다.
-        attributes: ["name"],
+        model: Users,
+        attributes: ["updatedAt"],
+        include: [
+          {
+            model: UserInfos,
+            attributes: ["name"],
+          },
+        ],
       },
     ],
     order: [["createdAt", "DESC"]],
