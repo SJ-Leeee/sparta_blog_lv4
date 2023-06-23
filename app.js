@@ -1,5 +1,3 @@
-// app.js
-
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const usersRouter = require("./routes/users.route");
