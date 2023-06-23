@@ -70,6 +70,7 @@ router.put("/posts/:postId", authMiddleware, async (req, res) => {
   res.status(200).json({ data: "게시글이 수정되었습니다." });
 });
 
+// 게시글 삭제
 router.delete("/posts/:postId", authMiddleware, async (req, res) => {
   const { userId } = res.locals.user;
   const { postId } = req.params;

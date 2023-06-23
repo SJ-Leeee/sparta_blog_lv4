@@ -20,7 +20,7 @@ router.post("/login", async (req, res) => {
   );
   res.cookie("authorization", `Bearer ${token}`);
   return res.status(200).json({ message: "로그인 성공", userId: user.userId });
-}); // routes/users.route.js
+});
 
 // 회원가입
 router.post("/users", async (req, res) => {
