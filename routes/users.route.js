@@ -4,8 +4,8 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 // 로그인
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await Users.findOne({ where: { email } });
+  const { nickname, password } = req.body;
+  const user = await Users.findOne({ where: { nickname } });
   if (!user) {
     return res.status(401).json({ message: "존재하지 않는 이메일입니다." });
   } else if (user.password !== password) {
@@ -24,17 +24,24 @@ router.post("/login", async (req, res) => {
 
 // 회원가입
 router.post("/users", async (req, res) => {
-  const { email, password, confirmPassword, name, age, gender, profileImage } =
-    req.body;
+  const {
+    nickname,
+    password,
+    confirmPassword,
+    name,
+    age,
+    gender,
+    profileImage,
+  } = req.body;
 
-  if (email.length < 10) {
+  if (nickname.length < 10) {
     res.status(400).json({
-      errorMessage: "email 최소 10자 이상으로 작성하세요",
+      errorMessage: "nickname 최소 10자 이상으로 작성하세요",
     });
     return;
   }
 
-  if (password.length < 4 || password.includes(email)) {
+  if (password.length < 4 || password.includes(nickname)) {
     res.status(400).json({
       errorMessage:
         "password를 nickname 을 포함하지 않으면서 최소 4자 이상으로 작성하세요",
@@ -49,14 +56,14 @@ router.post("/users", async (req, res) => {
     return;
   }
 
-  const isExistUser = await Users.findOne({ where: { email } });
+  const isExistUser = await Users.findOne({ where: { nickname } });
 
   if (isExistUser) {
     return res.status(409).json({ message: "이미 존재하는 이메일입니다." });
   }
 
   // Users 테이블에 사용자를 추가합니다.
-  const user = await Users.create({ email, password });
+  const user = await Users.create({ nickname, password });
   // UserInfos 테이블에 사용자 정보를 추가합니다.
   const userInfo = await UserInfos.create({
     UserId: user.userId, // 생성한 유저의 userId를 바탕으로 사용자 정보를 생성합니다.
@@ -74,7 +81,7 @@ router.get("/users/:userId", async (req, res) => {
   const { userId } = req.params;
 
   const user = await Users.findOne({
-    attributes: ["userId", "email", "createdAt", "updatedAt"],
+    attributes: ["userId", "nickname", "createdAt", "updatedAt"],
     include: [
       {
         model: UserInfos, // 1:1 관계를 맺고있는 UserInfos 테이블을 조회합니다.

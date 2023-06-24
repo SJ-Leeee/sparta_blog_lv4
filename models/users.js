@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true, // Primary Key (기본키)
         type: DataTypes.INTEGER,
       },
-      email: {
+      nickname: {
         allowNull: false, // NOT NULL
         type: DataTypes.STRING,
         unique: true,

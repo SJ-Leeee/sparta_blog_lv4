@@ -10,7 +10,7 @@ express와 mysql을 이용한 백엔드 프로젝트입니다
 
 **POST**//<a>localhost:3018/api/login</a>
 
-- email, password 항목 req.body 로 전달
+- nickname, password 항목 req.body 로 전달
 - DB값 검증
 - 로그인시 JWT토큰을 생성해 res.cookie로 전달
 
@@ -18,9 +18,9 @@ express와 mysql을 이용한 백엔드 프로젝트입니다
 
 **POST**//<a>localhost:3018/api/users</a>
 
-- email, password, confirmPassword, name, age, gender, profileImage를 req.body로 전달
-- email, password는 Users에 name, age, gender, profileImage는 UserInfos에 저장
-- DB값 email 중복 체크
+- nickname, password, confirmPassword, name, age, gender, profileImage를 req.body로 전달
+- nickname, password는 Users에 name, age, gender, profileImage는 UserInfos에 저장
+- DB값 nickname 중복 체크
 
 #### 👌사용자 조회 api
 
@@ -30,7 +30,7 @@ express와 mysql을 이용한 백엔드 프로젝트입니다
 
 **GET**//<a>localhost:3018/api/posts</a>
 
-- postId, title, createdAt, email 출력
+- postId, title, createdAt, nickname 출력
 - 날짜 내림차순
 - 토큰검사 x
 

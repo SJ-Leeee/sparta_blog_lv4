@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Comments.init(
     {
-      commentId: {
+      Id: {
         allowNull: false, // NOT NULL
         autoIncrement: true, // AUTO_INCREMENT
         primaryKey: true, // Primary Key (기본키)
