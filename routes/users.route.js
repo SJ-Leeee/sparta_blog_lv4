@@ -34,9 +34,13 @@ router.post("/users", async (req, res) => {
     profileImage,
   } = req.body;
 
-  if (nickname.length < 10) {
+  const regex = /^[a-zA-Z0-9]{3,}$/;
+  const idCheck = regex.test(nickname);
+
+  if (!idCheck) {
     res.status(400).json({
-      errorMessage: "nickname 최소 10자 이상으로 작성하세요",
+      errorMessage:
+        "nickname을 최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9) 으로 작성하세요",
     });
     return;
   }
