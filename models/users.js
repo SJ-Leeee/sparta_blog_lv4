@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       likePosts: {
         allowNull: true,
-        type: DataTypes.JSON,
+        type: DataTypes.STRING,
       },
       createdAt: {
         allowNull: false, // NOT NULL
