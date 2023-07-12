@@ -1,5 +1,5 @@
 const express = require("express");
-const { Posts, Users } = require("../models");
+const { Posts, Users, postLikes } = require("../models");
 const authMiddleware = require("../middlewares/auth-middleware");
 const router = express.Router();
 const { Op } = require("sequelize");
@@ -94,45 +94,46 @@ router.delete("/posts/:postId", authMiddleware, async (req, res) => {
   res.status(200).json({ data: "게시글이 삭제되었습니다." });
 });
 
-router.put("/likes/:postId", authMiddleware, async (req, res) => {
+// 좋아요 기능
+router.put("/posts/:postId/likes", authMiddleware, async (req, res) => {
   const { userId } = res.locals.user;
   const { postId } = req.params;
-  const post = await Posts.findOne({ where: { postId } });
-  const user = await Users.findOne({ where: { userId } });
   try {
-    if (!post) {
-      return res.status(404).json({ message: "게시글이 존재하지 않습니다." });
-    } else if (post.UserId !== userId) {
-      return res.status(404).json({ message: "좋아요 할 권한이 없습니다." });
-    }
-    const likes = post.likes;
-    const likePosts = user.likePosts; // 문자열 형태의 likePosts 가져옴
-    const likePostsArr = likePosts ? JSON.parse(likePosts) : []; // likePostsArr이 존재하면 배열형태로 저장 아무것도 없으면 빈배열로 저장
-    const isExist = likePostsArr.filter((likePost) => likePost == postId);
-    if (!isExist.length) {
-      likePostsArr.push(Number(postId)); // 숫자형태의 postId를 배열에 넣어서 추가해줌
-      const likePostsArrToStr = JSON.stringify(likePostsArr);
+    const existPost = await Posts.findOne({ where: { postId } });
+    const existPostLikes = await postLikes.findOne({
+      where: { postId, userId },
+    });
+    const likes = existPost.likes;
 
-      await Posts.update({ likes: likes + 1 }, { where: { postId } });
-      await Users.update(
-        { likePosts: likePostsArrToStr },
-        { where: { userId } }
+    if (!existPost) {
+      return res.status(404).json({ message: "게시글이 존재하지 않습니다." });
+    }
+
+    if (!existPostLikes) {
+      await postLikes.create({
+        userId,
+        postId,
+      });
+      await Posts.update(
+        { likes: likes + 1 },
+        {
+          where: { postId },
+        }
       );
-      return res.status(200).json({ message: "좋아요가 추가 되었습니다" });
+      return res.status(200).json({ message: "좋아요가 추가되었습니다." });
     } else {
-      const subLikePost = likePostsArr.filter(
-        (likePost) => likePost !== Number(postId)
+      await postLikes.destroy({ where: { postId, userId } });
+      await Posts.update(
+        { likes: likes - 1 },
+        {
+          where: { postId },
+        }
       );
-      const likePostsArrToStr = JSON.stringify(subLikePost);
-      await Posts.update({ likes: likes - 1 }, { where: { postId } });
-      await Users.update(
-        { likePosts: likePostsArrToStr },
-        { where: { userId } }
-      );
-      return res.status(200).json({ message: "좋아요가 해제되었습니다" });
+      return res.status(200).json({ message: "좋아요가 취소되었습니다." });
     }
   } catch (error) {
-    return res.status(400).send(error);
+    console.log(error);
+    return res.status(400).json({ errorMessage: error });
   }
 });
 
